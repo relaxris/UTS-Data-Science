@@ -71,15 +71,39 @@ print(data.describe())
 # 4. STATUS PESANAN
 # =====================================
 
-status = data["Status Pesanan"].value_counts()
+# ==========================
+# ANALISIS STATUS PESANAN
+# ==========================
+
+data["Status Bersih"] = data["Status Pesanan"]
+
+# Gabungkan status yang mirip
+data.loc[
+    data["Status Bersih"].str.contains(
+        "Pesanan diterima",
+        na=False
+    ),
+    "Status Bersih"
+] = "Diterima"
+
+data["Status Bersih"] = data["Status Bersih"].replace(
+    {
+        "Telah Dikirim": "Sedang Dikirim"
+    }
+)
+
+status = data["Status Bersih"].value_counts()
 
 print("\nStatus Pesanan:")
 print(status)
 
 plt.figure(figsize=(8,5))
 status.plot(kind="bar")
+
 plt.title("Distribusi Status Pesanan")
 plt.ylabel("Jumlah")
+plt.xticks(rotation=0)
+
 plt.tight_layout()
 plt.savefig("status_pesanan.png")
 plt.show()
